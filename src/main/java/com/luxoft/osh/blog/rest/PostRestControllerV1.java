@@ -110,7 +110,7 @@ public class PostRestControllerV1 {
         return responseEntity;
     }
 
-    @GetMapping("star")
+    @GetMapping(value = "star", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<Post>> getPostsWithStar() {
         logger.info("PostRestControllerV1 getPostsWithStar");
 
@@ -123,7 +123,7 @@ public class PostRestControllerV1 {
         return new ResponseEntity<>(posts, HttpStatus.OK);
     }
 
-    @PutMapping("{id}/star")
+    @PutMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> addStarToPost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 addStarToPost");
 
@@ -136,7 +136,7 @@ public class PostRestControllerV1 {
         return responseEntity;
     }
 
-    @DeleteMapping("{id}/star")
+    @DeleteMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> removeStarFromPost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 removeStarFromPost");
 
