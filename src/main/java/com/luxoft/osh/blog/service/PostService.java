@@ -13,8 +13,6 @@ public interface PostService {
 
     void save(Post post);
 
-    void edit(Post post, Long id);
-
     Post getPostWithComments(Long id);
 
     List<Post> getPostsWithStar();

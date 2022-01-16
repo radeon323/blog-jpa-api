@@ -76,15 +76,15 @@ public class PostRestControllerV1 {
         return responseEntity;
     }
 
-    @PostMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PutMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> updatePost(@RequestBody @Valid Post post, @PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 updatePost {}", post);
 
         if (post == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
-        postService.edit(post, postId);
+        post.setId(postId);
+        postService.save(post);
 
         ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
@@ -96,11 +96,11 @@ public class PostRestControllerV1 {
     public ResponseEntity<Post> deletePost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 deletePost {}", postId);
 
-        Post post = postService.getById(postId);
-
-        if (post == null) {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+//        Post post = postService.getById(postId);
+//
+//        if (post == null) {
+//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+//        }
 
         postService.delete(postId);
 

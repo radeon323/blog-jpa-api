@@ -45,26 +45,6 @@ public class PostServiceImpl implements PostService{
     }
 
     @Override
-    public void edit(Post post, Long id) {
-        logger.info("In PostServiceImpl edit {}", post);
-        Post editedPost = postRepository.getById(id);
-
-        if(Objects.nonNull(post.getTitle()) && !"".equalsIgnoreCase(post.getTitle())){
-            editedPost.setTitle(post.getTitle());
-        }
-        if(Objects.nonNull(post.getContent()) && !"".equalsIgnoreCase(post.getContent())) {
-            editedPost.setContent(post.getContent());
-        }
-        if(editedPost.isStar()) {
-            editedPost.setStar(!post.isStar());
-        } else {
-            editedPost.setStar(post.isStar());
-        }
-
-        postRepository.save(editedPost);
-    }
-
-    @Override
     public Post getPostWithComments(Long id) {
         logger.info("In PostServiceImpl getPostWithComments {}", id);
         return null;
@@ -78,7 +58,7 @@ public class PostServiceImpl implements PostService{
 
     @Override
     public void addStar(Long id) {
-        logger.info("In PostServiceImpl markPostWithStar {}", id);
+        logger.info("In PostServiceImpl addStar {}", id);
         Post post = postRepository.getById(id);
         post.setStar(true);
         postRepository.save(post);
