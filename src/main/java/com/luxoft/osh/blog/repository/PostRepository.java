@@ -11,4 +11,6 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     List<Post> findAllByStar(boolean star);
 
+    List<Post> findByTitle(String title);
+
 }

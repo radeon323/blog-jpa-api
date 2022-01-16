@@ -6,10 +6,12 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 @RequiredArgsConstructor
@@ -71,4 +73,29 @@ public class PostServiceImpl implements PostService{
         post.setStar(false);
         postRepository.save(post);
     }
+
+    @Override
+    public List<Post> findByTitle(String title) {
+        logger.info("In PostServiceImpl findByTitle {}", title);
+        return postRepository.findByTitle(title);
+    }
+
+    @Override
+    public List<Post> sortByTitle() {
+        logger.info("In PostServiceImpl sortByTitle");
+
+        List<Post> sortedList = postRepository.findAll();
+
+        sortedList.sort(new Comparator<Post>() {
+            @Override
+            public int compare(Post p1, Post p2) {
+                return p1.getTitle().compareTo(p2.getTitle());
+            }
+        });
+
+        return sortedList;
+    }
+
+
+
 }

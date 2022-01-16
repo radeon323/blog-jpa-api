@@ -25,10 +25,19 @@ public class PostRestControllerV1 {
     private final PostService postService;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Post>> getAllPosts() {
+    public ResponseEntity<List<Post>> getAllPosts(@RequestParam(value = "title", required = false) String title,
+                                                  @RequestParam(value = "sort", required = false) String sort) {
         logger.info("PostRestControllerV1 getAllPosts");
 
-        List<Post> posts = postService.getAll();
+        List<Post> posts;
+
+        if (sort != null) {
+            posts = postService.sortByTitle();
+        } else if (title != null) {
+            posts = postService.findByTitle(title);
+        } else {
+            posts = postService.getAll();
+        }
 
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -41,8 +50,8 @@ public class PostRestControllerV1 {
     }
 
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> getPost(@PathVariable("id") Long postId) {
-        logger.info("PostRestControllerV1 getPost {}", postId);
+    public ResponseEntity<Post> getPostById(@PathVariable("id") Long postId) {
+        logger.info("PostRestControllerV1 getPostById {}", postId);
 
         Post post = postService.getById(postId);
 
@@ -148,6 +157,7 @@ public class PostRestControllerV1 {
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
     }
+
 
 
 }

@@ -21,4 +21,8 @@ public interface PostService {
 
     void removeStar(Long id);
 
+    List<Post> findByTitle(String title);
+
+    List<Post> sortByTitle();
+
 }
