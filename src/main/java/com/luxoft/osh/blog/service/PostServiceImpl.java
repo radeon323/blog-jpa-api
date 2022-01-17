@@ -6,16 +6,17 @@ import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class PostServiceImpl implements PostService{
+public class PostServiceImpl implements PostService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -83,18 +84,9 @@ public class PostServiceImpl implements PostService{
     @Override
     public List<Post> sortByTitle() {
         logger.info("In PostServiceImpl sortByTitle");
-
-        List<Post> sortedList = postRepository.findAll();
-
-        sortedList.sort(new Comparator<Post>() {
-            @Override
-            public int compare(Post p1, Post p2) {
-                return p1.getTitle().compareTo(p2.getTitle());
-            }
-        });
-
-        return sortedList;
+        return postRepository.findByOrderByTitleAsc(PageRequest.of(0, 4));
     }
+
 
 
 
