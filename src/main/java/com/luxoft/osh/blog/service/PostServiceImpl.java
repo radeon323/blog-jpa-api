@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -56,6 +57,7 @@ public class PostServiceImpl implements PostService {
         return postRepository.findAllByStar(true);
     }
 
+    @Transactional
     @Override
     public void addStar(Long id) {
         logger.info("In PostServiceImpl addStar {}", id);
@@ -64,6 +66,7 @@ public class PostServiceImpl implements PostService {
         postRepository.save(post);
     }
 
+    @Transactional
     @Override
     public void removeStar(Long id) {
         logger.info("In PostServiceImpl removeStar {}", id);

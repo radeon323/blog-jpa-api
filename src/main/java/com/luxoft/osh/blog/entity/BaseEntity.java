@@ -1,16 +1,20 @@
 package com.luxoft.osh.blog.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import lombok.Data;
+import lombok.*;
+
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.MappedSuperclass;
 
-@Data
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @MappedSuperclass
 @JsonIgnoreProperties({"hibernateLazyInitializer"})
-public class BaseEntity {
+public abstract class BaseEntity<T> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
