@@ -23,4 +23,5 @@ public class Comment extends BaseEntity<Comment>{
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "post", referencedColumnName = "id")
     private Post post;
+
 }

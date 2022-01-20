@@ -1,5 +1,7 @@
 package com.luxoft.osh.blog.rest;
 
+import com.luxoft.osh.blog.dto.PostFull;
+import com.luxoft.osh.blog.dto.PostShort;
 import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.service.PostService;
 import lombok.RequiredArgsConstructor;
@@ -51,8 +53,40 @@ public class PostRestControllerV1 {
     }
 
     @GetMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> getPostById(@PathVariable("id") Long postId) {
-        logger.info("PostRestControllerV1 getPostById {}", postId);
+    public ResponseEntity<PostShort> getPostByIdShort(@PathVariable("id") Long postId) {
+        logger.info("PostRestControllerV1 getPostByIdShort {}", postId);
+
+        Post post = postService.getById(postId);
+
+
+        if (postId == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        PostShort postShort = convertToShort(post);
+
+        ResponseEntity<PostShort> responseEntity = new ResponseEntity<>(postShort, HttpStatus.OK);
+        logger.info("Status Code {}", responseEntity.getStatusCode());
+        logger.info("Request Body {}", responseEntity.getBody());
+        return responseEntity;
+    }
+
+    private PostShort convertToShort(Post post) {
+        PostShort postShort = new PostShort();
+        postShort.setId(post.getId());
+        postShort.setTitle(post.getTitle());
+        postShort.setContent(post.getContent());
+        postShort.setStar(post.isStar());
+        return postShort;
+    }
+
+    @GetMapping(value = "{id}/full", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PostFull> getPostByIdFull(@PathVariable("id") Long postId) {
+        logger.info("PostRestControllerV1 getPostByIdFull {}", postId);
 
         Post post = postService.getById(postId);
 
@@ -64,10 +98,22 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.OK);
+        PostFull postFull = convertToFull(post);
+
+        ResponseEntity<PostFull> responseEntity = new ResponseEntity<>(postFull, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
+    }
+
+    private PostFull convertToFull(Post post) {
+        PostFull postFull = new PostFull();
+        postFull.setId(post.getId());
+        postFull.setTitle(post.getTitle());
+        postFull.setContent(post.getContent());
+        postFull.setStar(post.isStar());
+        postFull.setComments(post.getComments());
+        return postFull;
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -93,6 +139,7 @@ public class PostRestControllerV1 {
         if (post == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
         post.setId(postId);
         postService.save(post);
 
@@ -105,12 +152,6 @@ public class PostRestControllerV1 {
     @DeleteMapping(value = "{id}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> deletePost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 deletePost {}", postId);
-
-//        Post post = postService.getById(postId);
-//
-//        if (post == null) {
-//            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-//        }
 
         postService.delete(postId);
 
@@ -130,28 +171,34 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        return new ResponseEntity<>(posts, HttpStatus.OK);
-    }
-
-    @PutMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> addStarToPost(@PathVariable("id") Long postId) {
-        logger.info("PostRestControllerV1 addStarToPost");
-
-        postService.addStar(postId);
-        Post post = postService.getById(postId);
-
-        ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.OK);
+        ResponseEntity<List<Post>> responseEntity = new ResponseEntity<>(posts, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
     }
 
+    @PutMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Post> addStarToPost(@PathVariable("id") Long postId) {
+        logger.info("PostRestControllerV1 addStarToPost");
+        return putDeleteStar(postId);
+    }
+
     @DeleteMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Post> removeStarFromPost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 removeStarFromPost");
+        return putDeleteStar(postId);
+    }
 
-        postService.removeStar(postId);
+    @Transactional
+    private ResponseEntity<Post> putDeleteStar(Long postId) {
         Post post = postService.getById(postId);
+
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        post.setStar(!post.isStar());
+        postService.save(post);
 
         ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());

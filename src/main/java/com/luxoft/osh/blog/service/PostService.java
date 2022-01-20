@@ -17,10 +17,6 @@ public interface PostService {
 
     List<Post> getPostsWithStar();
 
-    void addStar(Long id);
-
-    void removeStar(Long id);
-
     List<Post> findByTitle(String title);
 
     List<Post> sortByTitle();

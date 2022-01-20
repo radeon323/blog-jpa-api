@@ -1,7 +1,6 @@
 package com.luxoft.osh.blog.rest;
 
 import com.luxoft.osh.blog.entity.Comment;
-import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.service.CommentService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
@@ -14,10 +13,6 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
-//
-//POST /api/v1/posts/1/comments
-//        GET /api/v1/posts/{id}/comments
-//        GET /api/v1/posts/{postId}/comment/{commentId}
 
 @RestController
 @RequestMapping("/api/v1/posts/")

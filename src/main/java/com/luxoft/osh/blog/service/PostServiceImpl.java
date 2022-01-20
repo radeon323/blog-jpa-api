@@ -1,25 +1,29 @@
 package com.luxoft.osh.blog.service;
 
 import com.luxoft.osh.blog.entity.Post;
+import com.luxoft.osh.blog.repository.CommentRepository;
 import com.luxoft.osh.blog.repository.PostRepository;
-import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
-@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    @Autowired
     private final PostRepository postRepository;
+    private final CommentRepository commentRepository;
+
+    @Autowired
+    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
+        this.postRepository = postRepository;
+        this.commentRepository = commentRepository;
+    }
 
     @Override
     public List<Post> getAll() {
@@ -48,31 +52,15 @@ public class PostServiceImpl implements PostService {
     @Override
     public Post getPostWithComments(Long id) {
         logger.info("In PostServiceImpl getPostWithComments {}", id);
+
         return null;
+
     }
 
     @Override
     public List<Post> getPostsWithStar() {
         logger.info("In PostServiceImpl getPostsWithStar");
         return postRepository.findAllByStar(true);
-    }
-
-    @Transactional
-    @Override
-    public void addStar(Long id) {
-        logger.info("In PostServiceImpl addStar {}", id);
-        Post post = postRepository.getById(id);
-        post.setStar(true);
-        postRepository.save(post);
-    }
-
-    @Transactional
-    @Override
-    public void removeStar(Long id) {
-        logger.info("In PostServiceImpl removeStar {}", id);
-        Post post = postRepository.getById(id);
-        post.setStar(false);
-        postRepository.save(post);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.luxoft.osh.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -25,15 +26,8 @@ public class Post extends BaseEntity<Post>{
     private boolean star;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "post", referencedColumnName = "id")
+    @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
-
-    public void addComment(Comment comment) {
-        comments.add(comment);
-    }
-
-    public void removeComment(Comment comment) {
-        comments.remove(comment);
-    }
-
 
 }

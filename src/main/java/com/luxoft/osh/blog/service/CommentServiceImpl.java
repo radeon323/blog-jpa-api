@@ -45,7 +45,6 @@ public class CommentServiceImpl implements CommentService{
         commentRepository.deleteById(id);
     }
 
-    @Transactional
     @Override
     public void save(Comment comment, Long postId) {
         logger.info("In CommentServiceImpl save");
