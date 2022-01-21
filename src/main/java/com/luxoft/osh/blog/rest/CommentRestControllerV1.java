@@ -62,15 +62,28 @@ public class CommentRestControllerV1 {
     @GetMapping(value = "{postId}/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Comment> getCommentByIdByPostId(
             @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
-        logger.info("CommentRestControllerV1 getAllComments");
+        logger.info("CommentRestControllerV1 getCommentByIdByPostId");
 
-        Comment comment = commentService.getById(commentId, postId);
+        Comment comment = commentService.getByIdAndPost_Id(commentId, postId);
 
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
         ResponseEntity<Comment> responseEntity = new ResponseEntity<>(comment, HttpStatus.OK);
+        logger.info("Status Code {}", responseEntity.getStatusCode());
+        logger.info("Request Body {}", responseEntity.getBody());
+        return responseEntity;
+    }
+
+    @DeleteMapping(value = "{postId}/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Comment> deleteCommentByIdByPostId(
+            @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
+        logger.info("CommentRestControllerV1 deleteCommentByIdByPostId");
+
+        commentService.deleteById(commentId);
+
+        ResponseEntity<Comment> responseEntity = new ResponseEntity<>(HttpStatus.NO_CONTENT);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;

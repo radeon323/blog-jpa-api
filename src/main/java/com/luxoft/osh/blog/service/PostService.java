@@ -13,8 +13,6 @@ public interface PostService {
 
     void save(Post post);
 
-    Post getPostWithComments(Long id);
-
     List<Post> getPostsWithStar();
 
     List<Post> findByTitle(String title);

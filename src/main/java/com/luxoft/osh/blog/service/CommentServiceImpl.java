@@ -1,14 +1,12 @@
 package com.luxoft.osh.blog.service;
 
 import com.luxoft.osh.blog.entity.Comment;
-import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.repository.CommentRepository;
 import com.luxoft.osh.blog.repository.PostRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -34,14 +32,14 @@ public class CommentServiceImpl implements CommentService{
     }
 
     @Override
-    public Comment getById(Long id, Long postId) {
-        logger.info("In CommentServiceImpl getById");
+    public Comment getByIdAndPost_Id(Long id, Long postId) {
+        logger.info("In CommentServiceImpl getByIdAndPost_Id");
         return commentRepository.getByIdAndPost_Id(id, postId);
     }
 
     @Override
-    public void delete(Long id) {
-        logger.info("In CommentServiceImpl delete");
+    public void deleteById(Long id) {
+        logger.info("In CommentServiceImpl deleteById");
         commentRepository.deleteById(id);
     }
 

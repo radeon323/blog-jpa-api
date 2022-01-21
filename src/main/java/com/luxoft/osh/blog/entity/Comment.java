@@ -1,6 +1,9 @@
 package com.luxoft.osh.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -20,8 +23,24 @@ public class Comment extends BaseEntity<Comment>{
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
+    @OnDelete(action = OnDeleteAction.CASCADE)
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "post", referencedColumnName = "id")
+    @JoinColumn(name = "post")
     private Post post;
+
+    @JsonProperty("post")
+    public long getPostId() {
+        return post.getId();
+    }
+
+    @Override
+    public String toString() {
+        return "Comment{" +
+                "id=" + getId() +
+                ", text='" + getText() + '\'' +
+                ", creationDate=" + getCreationDate() +
+                ", post=" + getPostId() +
+                '}';
+    }
 
 }

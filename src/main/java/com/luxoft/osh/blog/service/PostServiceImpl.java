@@ -1,8 +1,9 @@
 package com.luxoft.osh.blog.service;
 
 import com.luxoft.osh.blog.entity.Post;
-import com.luxoft.osh.blog.repository.CommentRepository;
 import com.luxoft.osh.blog.repository.PostRepository;
+import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,18 +13,13 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class PostServiceImpl implements PostService {
 
     Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final PostRepository postRepository;
-    private final CommentRepository commentRepository;
-
     @Autowired
-    public PostServiceImpl(PostRepository postRepository, CommentRepository commentRepository) {
-        this.postRepository = postRepository;
-        this.commentRepository = commentRepository;
-    }
+    private final PostRepository postRepository;
 
     @Override
     public List<Post> getAll() {
@@ -50,14 +46,6 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public Post getPostWithComments(Long id) {
-        logger.info("In PostServiceImpl getPostWithComments {}", id);
-
-        return null;
-
-    }
-
-    @Override
     public List<Post> getPostsWithStar() {
         logger.info("In PostServiceImpl getPostsWithStar");
         return postRepository.findAllByStar(true);
@@ -74,8 +62,6 @@ public class PostServiceImpl implements PostService {
         logger.info("In PostServiceImpl sortByTitle");
         return postRepository.findByOrderByTitleAsc(PageRequest.of(0, 4));
     }
-
-
 
 
 }

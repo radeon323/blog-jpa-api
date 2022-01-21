@@ -1,5 +1,6 @@
 package com.luxoft.osh.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
@@ -26,8 +27,17 @@ public class Post extends BaseEntity<Post>{
     private boolean star;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post", referencedColumnName = "id")
+    @JoinColumn(name = "post")
     @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + getId() +
+                ", title='" + getTitle() + '\'' +
+                ", content='" + getContent() + '\'' +
+                ", star=" + isStar() +
+                '}';
+    }
 }
