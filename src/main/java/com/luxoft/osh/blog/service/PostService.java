@@ -5,7 +5,7 @@ import java.util.List;
 
 public interface PostService {
 
-    List<Post> getAll();
+    List<Post> findAll();
 
     Post getById(Long id);
 

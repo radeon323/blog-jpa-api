@@ -2,7 +2,6 @@ package com.luxoft.osh.blog.service;
 
 import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.repository.PostRepository;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,7 +21,7 @@ public class PostServiceImpl implements PostService {
     private final PostRepository postRepository;
 
     @Override
-    public List<Post> getAll() {
+    public List<Post> findAll() {
         logger.info("In PostServiceImpl getAll");
         return postRepository.findAll();
     }

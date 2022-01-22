@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
+import java.util.ArrayList;
 import java.util.List;
 
 
@@ -28,7 +29,7 @@ public class PostRestControllerV1 {
     private final PostService postService;
 
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Post>> getAllPosts(@RequestParam(value = "title", required = false) String title,
+    public ResponseEntity<List<PostShort>> getAllPosts(@RequestParam(value = "title", required = false) String title,
                                                   @RequestParam(value = "sort", required = false) String sort) {
         logger.info("PostRestControllerV1 getAllPosts");
 
@@ -39,14 +40,19 @@ public class PostRestControllerV1 {
         } else if (title != null) {
             posts = postService.findByTitle(title);
         } else {
-            posts = postService.getAll();
+            posts = postService.findAll();
         }
 
         if (posts.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        ResponseEntity<List<Post>> responseEntity = new ResponseEntity<>(posts, HttpStatus.OK);
+        List<PostShort> postShortList = new ArrayList<>();
+        for (Post post : posts) {
+            postShortList.add(dtoConvertToShort(post));
+        }
+
+        ResponseEntity<List<PostShort>> responseEntity = new ResponseEntity<>(postShortList, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
@@ -67,21 +73,12 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PostShort postShort = convertToShort(post);
+        PostShort postShort = dtoConvertToShort(post);
 
         ResponseEntity<PostShort> responseEntity = new ResponseEntity<>(postShort, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
-    }
-
-    private PostShort convertToShort(Post post) {
-        PostShort postShort = new PostShort();
-        postShort.setId(post.getId());
-        postShort.setTitle(post.getTitle());
-        postShort.setContent(post.getContent());
-        postShort.setStar(post.isStar());
-        return postShort;
     }
 
     @GetMapping(value = "{id}/full", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -98,22 +95,12 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        PostFull postFull = convertToFull(post);
+        PostFull postFull = dtoConvertToFull(post);
 
         ResponseEntity<PostFull> responseEntity = new ResponseEntity<>(postFull, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
-    }
-
-    private PostFull convertToFull(Post post) {
-        PostFull postFull = new PostFull();
-        postFull.setId(post.getId());
-        postFull.setTitle(post.getTitle());
-        postFull.setContent(post.getContent());
-        postFull.setStar(post.isStar());
-        postFull.setComments(post.getComments());
-        return postFull;
     }
 
     @PostMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -162,7 +149,7 @@ public class PostRestControllerV1 {
     }
 
     @GetMapping(value = "star", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<Post>> getPostsWithStar() {
+    public ResponseEntity<List<PostShort>> getPostsWithStar() {
         logger.info("PostRestControllerV1 getPostsWithStar");
 
         List<Post> posts = postService.getPostsWithStar();
@@ -171,26 +158,34 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 
-        ResponseEntity<List<Post>> responseEntity = new ResponseEntity<>(posts, HttpStatus.OK);
+        List<PostShort> postShortList = new ArrayList<>();
+        for (Post post : posts) {
+            postShortList.add(dtoConvertToShort(post));
+        }
+
+        ResponseEntity<List<PostShort>> responseEntity = new ResponseEntity<>(postShortList, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
     }
 
     @PutMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> addStarToPost(@PathVariable("id") Long postId) {
+    public ResponseEntity<PostShort> addStarToPost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 addStarToPost");
         return putDeleteStar(postId);
     }
 
     @DeleteMapping(value = "{id}/star", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Post> removeStarFromPost(@PathVariable("id") Long postId) {
+    public ResponseEntity<PostShort> removeStarFromPost(@PathVariable("id") Long postId) {
         logger.info("PostRestControllerV1 removeStarFromPost");
         return putDeleteStar(postId);
     }
 
+
+
+
     @Transactional
-    private ResponseEntity<Post> putDeleteStar(Long postId) {
+    private ResponseEntity<PostShort> putDeleteStar(Long postId) {
         Post post = postService.getById(postId);
 
         if (post == null) {
@@ -199,13 +194,32 @@ public class PostRestControllerV1 {
 
         post.setStar(!post.isStar());
         postService.save(post);
+        PostShort postShort = dtoConvertToShort(post);
 
-        ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.OK);
+        ResponseEntity<PostShort> responseEntity = new ResponseEntity<>(postShort, HttpStatus.OK);
         logger.info("Status Code {}", responseEntity.getStatusCode());
         logger.info("Request Body {}", responseEntity.getBody());
         return responseEntity;
     }
 
+    private PostShort dtoConvertToShort(Post post) {
+        PostShort postShort = new PostShort();
+        postShort.setId(post.getId());
+        postShort.setTitle(post.getTitle());
+        postShort.setContent(post.getContent());
+        postShort.setStar(post.isStar());
+        return postShort;
+    }
+
+    private PostFull dtoConvertToFull(Post post) {
+        PostFull postFull = new PostFull();
+        postFull.setId(post.getId());
+        postFull.setTitle(post.getTitle());
+        postFull.setContent(post.getContent());
+        postFull.setStar(post.isStar());
+        postFull.setComments(post.getComments());
+        return postFull;
+    }
 
 
 }

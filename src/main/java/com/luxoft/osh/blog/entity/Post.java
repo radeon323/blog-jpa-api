@@ -1,7 +1,5 @@
 package com.luxoft.osh.blog.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -15,7 +13,11 @@ import java.util.List;
 @Entity
 @Builder
 @Table( name = "posts" )
-public class Post extends BaseEntity<Post>{
+public class Post {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "title")
     private String title;
@@ -28,16 +30,15 @@ public class Post extends BaseEntity<Post>{
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "post")
-    @JsonIgnore
     private List<Comment> comments = new ArrayList<>();
 
     @Override
     public String toString() {
         return "Post{" +
-                "id=" + getId() +
-                ", title='" + getTitle() + '\'' +
-                ", content='" + getContent() + '\'' +
-                ", star=" + isStar() +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", star=" + star +
                 '}';
     }
 }

@@ -15,7 +15,11 @@ import java.time.LocalDateTime;
 @Entity
 @Builder
 @Table( name = "comments" )
-public class Comment extends BaseEntity<Comment>{
+public class Comment {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
 
     @Column(name = "text", nullable = false)
     private String text;
@@ -36,9 +40,9 @@ public class Comment extends BaseEntity<Comment>{
     @Override
     public String toString() {
         return "Comment{" +
-                "id=" + getId() +
-                ", text='" + getText() + '\'' +
-                ", creationDate=" + getCreationDate() +
+                "id=" + id +
+                ", text='" + text + '\'' +
+                ", creationDate=" + creationDate +
                 ", post=" + getPostId() +
                 '}';
     }
