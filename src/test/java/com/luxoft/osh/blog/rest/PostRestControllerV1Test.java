@@ -4,7 +4,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.repository.PostRepository;
 import com.luxoft.osh.blog.service.PostService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -13,6 +15,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -49,7 +52,7 @@ class PostRestControllerV1Test {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("A baba galamaga"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("Content of the first post"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Second post"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").doesNotExist())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].star").isBoolean());
@@ -128,6 +131,7 @@ class PostRestControllerV1Test {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id").value(3))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.star").value(true))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.title").value("A Third post"));
     }
 
@@ -154,7 +158,7 @@ class PostRestControllerV1Test {
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("A baba galamaga"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$[0].content").value("Content of the first post"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].title").value("Second post"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].name").doesNotExist())
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].star").isBoolean());
@@ -162,17 +166,23 @@ class PostRestControllerV1Test {
 
     @Test
     void testAddStarToPost() throws Exception {
+        Post post = prepareForTestsAndReturnListOfPosts().get(1);
+        Mockito.when(postRepository.save(post)).thenReturn(post);
+        post.setStar(true);
+        String json = asJsonString(post);
         mockMvc.perform( MockMvcRequestBuilders
-                .put(API_URL + "{id}/star", 2)
-                .contentType(MediaType.APPLICATION_JSON))
+                .put(API_URL + "{id}/star", 2L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json))
                 .andDo(print())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.star").value(true))
                 .andExpect(status().isOk());
     }
 
     @Test
     void testRemoveStarFromPost() throws Exception {
         mockMvc.perform( MockMvcRequestBuilders
-                .delete(API_URL + "{id}/star", 2)
+                .delete(API_URL + "{id}/star", 2L)
                 .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk());
@@ -187,24 +197,27 @@ class PostRestControllerV1Test {
         Post firstPost = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
+                .comments(new ArrayList<>())
                 .build();
         posts.add(firstPost);
 
         Post secondPost = Post.builder()
                 .id(2L)
                 .title("Second post")
-                .content("Eins, zwei, Polizei")
+                .content("Content of the second post")
                 .star(false)
+                .comments(new ArrayList<>())
                 .build();
         posts.add(secondPost);
 
         Post thirdPost = Post.builder()
                 .id(3L)
                 .title("A Third post")
-                .content("Padav snih na porih, Kit zlipyv sobi pyrih.")
+                .content("Content of the third post")
                 .star(true)
+                .comments(new ArrayList<>())
                 .build();
         posts.add(thirdPost);
 
