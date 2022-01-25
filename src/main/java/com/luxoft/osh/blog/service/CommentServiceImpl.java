@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -25,24 +26,28 @@ public class CommentServiceImpl implements CommentService{
         this.postRepository = postRepository;
     }
 
+    @Transactional
     @Override
     public List<Comment> getAllByPostId(Long postId) {
         logger.info("In CommentServiceImpl getAllByPostId");
         return commentRepository.findAllByPost_Id(postId);
     }
 
+    @Transactional
     @Override
     public Comment getByIdAndPost_Id(Long id, Long postId) {
         logger.info("In CommentServiceImpl getByIdAndPost_Id");
         return commentRepository.getByIdAndPost_Id(id, postId);
     }
 
+    @Transactional
     @Override
     public void deleteById(Long id) {
         logger.info("In CommentServiceImpl deleteById");
         commentRepository.deleteById(id);
     }
 
+    @Transactional
     @Override
     public void save(Comment comment, Long postId) {
         logger.info("In CommentServiceImpl save");

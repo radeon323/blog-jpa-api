@@ -1,22 +1,25 @@
 package com.luxoft.osh.blog.entity;
 
 import lombok.*;
+import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
 
+@Entity
 @Getter
 @Setter
-@AllArgsConstructor
-@NoArgsConstructor
-@Entity
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
+@DynamicUpdate
 @Table( name = "posts" )
 public class Post {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "post_id_gen")
+    @SequenceGenerator(name = "post_id_gen", sequenceName = "post_id_seq", allocationSize = 1)
     private Long id;
 
     @Column(name = "title")
@@ -28,8 +31,7 @@ public class Post {
     @Column(name = "star", columnDefinition = "boolean default false")
     private boolean star;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "post")
+    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     @Override
