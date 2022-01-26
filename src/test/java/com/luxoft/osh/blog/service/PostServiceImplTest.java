@@ -31,7 +31,7 @@ class PostServiceImplTest {
         Post firstPost = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
                 .build();
         posts.add(firstPost);
@@ -39,7 +39,7 @@ class PostServiceImplTest {
         Post secondPost = Post.builder()
                 .id(2L)
                 .title("Second post")
-                .content("Eins, zwei, Polizei")
+                .content("Content of the second post")
                 .star(false)
                 .build();
         posts.add(secondPost);
@@ -47,7 +47,7 @@ class PostServiceImplTest {
         Post thirdPost = Post.builder()
                 .id(3L)
                 .title("Third post")
-                .content("Padav snih na porih, Kit zlipyv sobi pyrih.")
+                .content("Content of the third post")
                 .star(true)
                 .build();
         posts.add(thirdPost);
@@ -57,8 +57,8 @@ class PostServiceImplTest {
         List<Post> actualPosts = postService.findAll();
         assertNotNull(actualPosts);
         assertEquals(3, actualPosts.size());
-        assertEquals("Eins, zwei, Polizei", actualPosts.get(1).getContent());
-        assertSame(thirdPost, actualPosts.get(2));
+        assertEquals("Content of the second post", actualPosts.get(1).getContent());
+        assertEquals(thirdPost, actualPosts.get(2));
     }
 
     @Test
@@ -67,7 +67,7 @@ class PostServiceImplTest {
         Post post = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
                 .build();
 
@@ -75,7 +75,7 @@ class PostServiceImplTest {
         Post actualPost = postService.getById(1L);
 
         assertEquals("First post", actualPost.getTitle());
-        assertEquals("A baba galamaga", actualPost.getContent());
+        assertEquals("Content of the first post", actualPost.getContent());
         assertTrue(actualPost.isStar());
     }
 
@@ -98,7 +98,7 @@ class PostServiceImplTest {
         Post firstPost = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
                 .build();
         posts.add(firstPost);
@@ -106,7 +106,7 @@ class PostServiceImplTest {
         Post thirdPost = Post.builder()
                 .id(3L)
                 .title("Third post")
-                .content("Padav snih na porih, Kit zlipyv sobi pyrih.")
+                .content("Content of the third post")
                 .star(true)
                 .build();
         posts.add(thirdPost);
@@ -129,7 +129,7 @@ class PostServiceImplTest {
         Post firstPost = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
                 .build();
         posts.add(firstPost);
@@ -137,7 +137,7 @@ class PostServiceImplTest {
         Post secondPost = Post.builder()
                 .id(2L)
                 .title("Second post")
-                .content("Eins, zwei, Polizei")
+                .content("Content of the second post")
                 .star(false)
                 .build();
         posts.add(secondPost);
@@ -145,7 +145,7 @@ class PostServiceImplTest {
         Post thirdPost = Post.builder()
                 .id(3L)
                 .title("Third post")
-                .content("Padav snih na porih, Kit zlipyv sobi pyrih.")
+                .content("Content of the third post")
                 .star(true)
                 .build();
         posts.add(thirdPost);
@@ -166,7 +166,7 @@ class PostServiceImplTest {
         Post firstPost = Post.builder()
                 .id(1L)
                 .title("First post")
-                .content("A baba galamaga")
+                .content("Content of the first post")
                 .star(true)
                 .build();
         posts.add(firstPost);
@@ -174,7 +174,7 @@ class PostServiceImplTest {
         Post secondPost = Post.builder()
                 .id(2L)
                 .title("Second post")
-                .content("Eins, zwei, Polizei")
+                .content("Content of the second post")
                 .star(false)
                 .build();
         posts.add(secondPost);
@@ -182,12 +182,12 @@ class PostServiceImplTest {
         Post thirdPost = Post.builder()
                 .id(3L)
                 .title("Third post")
-                .content("Padav snih na porih, Kit zlipyv sobi pyrih.")
+                .content("Content of the third post")
                 .star(true)
                 .build();
         posts.add(thirdPost);
 
-        Mockito.when(postRepository.findByOrderByTitleAsc(PageRequest.of(0, 4))).thenReturn(posts);
+        Mockito.when(postRepository.findByOrderByTitleAsc(PageRequest.of(0, 10))).thenReturn(posts);
 
         List<String> sortedTitles = new ArrayList<>(List.of(thirdPost.getTitle(), firstPost.getTitle(), secondPost.getTitle()));
         Collections.sort(sortedTitles);
@@ -197,7 +197,6 @@ class PostServiceImplTest {
         assertEquals(sortedTitles.get(0), actualPosts.get(0).getTitle());
         assertEquals(sortedTitles.get(1), actualPosts.get(1).getTitle());
         assertEquals(sortedTitles.get(2), actualPosts.get(2).getTitle());
-
     }
 
 

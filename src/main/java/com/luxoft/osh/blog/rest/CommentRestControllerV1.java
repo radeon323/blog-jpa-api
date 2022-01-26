@@ -28,7 +28,7 @@ public class CommentRestControllerV1 {
     public ResponseEntity<List<Comment>> getAllComments(@PathVariable("id") Long postId) {
         logger.info("CommentRestControllerV1 getAllComments");
 
-        List<Comment> comments = commentService.getAllByPostId(postId);
+        List<Comment> comments = commentService.findAllByPostId(postId);
 
         if (comments.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

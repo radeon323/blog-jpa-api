@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface CommentService {
 
-    List<Comment> getAllByPostId(Long postId);
+    List<Comment> findAllByPostId(Long postId);
 
     Comment getByIdAndPost_Id(Long commentId, Long postId);
 

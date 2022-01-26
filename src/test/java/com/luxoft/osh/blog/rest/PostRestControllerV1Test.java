@@ -69,8 +69,8 @@ class PostRestControllerV1Test {
 
         given(postService.findAll()).willReturn(posts);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/")
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/")
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
@@ -114,8 +114,8 @@ class PostRestControllerV1Test {
 
         given(postService.sortByTitle()).willReturn(posts);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/?sort=title")
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/?sort=title")
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("First post"))
@@ -140,8 +140,8 @@ class PostRestControllerV1Test {
 
         given(postService.findByTitle("First post")).willReturn(posts);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/?title={title}", "First post")
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/?title={title}", "First post")
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("First post"));
@@ -160,8 +160,8 @@ class PostRestControllerV1Test {
 
         given(postService.getById(1L)).willReturn(post);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/{id}", 1)
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/{id}", 1)
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
@@ -181,9 +181,9 @@ class PostRestControllerV1Test {
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
-                .post("/api/v1/posts/")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(post)))
+                    .post("/api/v1/posts/")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(post)))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(2))
@@ -202,9 +202,9 @@ class PostRestControllerV1Test {
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
-                .put("/api/v1/posts/{id}", 2)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(post)))
+                    .put("/api/v1/posts/{id}", 2)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(post)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(2))
@@ -224,9 +224,9 @@ class PostRestControllerV1Test {
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
-                .delete("/api/v1/posts/{id}", 3)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(post)))
+                    .delete("/api/v1/posts/{id}", 3)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(post)))
                 .andDo(print())
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andExpect(status().isNoContent());
@@ -257,8 +257,8 @@ class PostRestControllerV1Test {
 
         when(postService.getPostsWithStar()).thenReturn(posts);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/star")
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/star")
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
@@ -279,8 +279,8 @@ class PostRestControllerV1Test {
 
         when(postService.getById(1L)).thenReturn(post);
         mockMvc.perform( MockMvcRequestBuilders
-                .put("/api/v1/posts/{id}/star", 1)
-                .contentType(MediaType.APPLICATION_JSON))
+                    .put("/api/v1/posts/{id}/star", 1)
+                    .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.star").value(true))
                 .andExpect(status().isOk());
@@ -301,8 +301,8 @@ class PostRestControllerV1Test {
 
         when(postService.getById(2L)).thenReturn(post);
         mockMvc.perform( MockMvcRequestBuilders
-                .delete("/api/v1/posts/{id}/star", 2)
-                .contentType(MediaType.APPLICATION_JSON))
+                    .delete("/api/v1/posts/{id}/star", 2)
+                    .contentType(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(jsonPath("$.star").value(false))
                 .andExpect(status().isOk());

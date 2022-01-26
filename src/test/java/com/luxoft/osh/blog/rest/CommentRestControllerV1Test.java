@@ -19,8 +19,9 @@ import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 
@@ -36,7 +37,6 @@ class CommentRestControllerV1Test {
 
     @MockBean
     private CommentService commentService;
-
 
     @Test
     void testGetAllComments() throws Exception {
@@ -68,10 +68,10 @@ class CommentRestControllerV1Test {
                 .build();
         comments.add(thirdComment);
 
-        given(commentService.getAllByPostId(1L)).willReturn(comments);
+        given(commentService.findAllByPostId(1L)).willReturn(comments);
         mockMvc.perform( MockMvcRequestBuilders
-                .get("/api/v1/posts/{id}/comments", 1L)
-                .accept(MediaType.APPLICATION_JSON))
+                    .get("/api/v1/posts/{id}/comments", 1L)
+                    .accept(MediaType.APPLICATION_JSON))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
@@ -80,9 +80,8 @@ class CommentRestControllerV1Test {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].text").value("Second comment text"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].text").value("Third comment text"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").doesNotExist());
-
+        verify(commentService, times(1)).findAllByPostId(1L);
     }
-
 
     @Test
     void testSaveComment() throws Exception {
@@ -94,30 +93,53 @@ class CommentRestControllerV1Test {
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
-                .post("/api/v1/posts/{id}/comments", 1)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(comment)))
+                    .post("/api/v1/posts/{id}/comments", 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(comment)))
                 .andDo(print())
                 .andExpect(status().isCreated())
-                .andExpect(MockMvcResultMatchers.jsonPath("$[0].text").value("First comment text"));
+                .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("First comment text"));
         verify(commentService).save(comment, 1L);
     }
 
-
-
-
     @Test
-    void testGetCommentByIdByPostId() {
+    void testGetCommentByIdByPostId() throws Exception {
+        Comment comment = Comment.builder()
+                .id(1L)
+                .text("First comment text")
+                .creationDate(LocalDateTime.now())
+                .post(new Post(1L,"","",true,null))
+                .build();
+
+        when(commentService.getByIdAndPost_Id(1L, 1L)).thenReturn(comment);
+        mockMvc.perform( MockMvcRequestBuilders
+                    .get("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
+                    .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1))
+                .andExpect(jsonPath("$.text").value("First comment text"));
+        verify(commentService, times(1)).getByIdAndPost_Id(1L,1L);
     }
 
     @Test
-    void testDeleteCommentByIdByPostId() {
+    void testDeleteCommentByIdByPostId() throws Exception {
+        Comment comment = Comment.builder()
+                .id(1L)
+                .text("First comment text")
+                .creationDate(LocalDateTime.now())
+                .post(new Post(1L,"","",true,null))
+                .build();
+
+        mockMvc.perform( MockMvcRequestBuilders
+                    .delete("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(objectMapper.writeValueAsString(comment)))
+                .andDo(print())
+                .andExpect(MockMvcResultMatchers.content().string(""))
+                .andExpect(status().isNoContent());
+        verify(commentService, times(1)).deleteById(1L);
     }
-
-
-
-
-
 
 
 

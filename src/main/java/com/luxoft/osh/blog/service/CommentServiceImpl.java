@@ -28,7 +28,7 @@ public class CommentServiceImpl implements CommentService{
 
     @Transactional
     @Override
-    public List<Comment> getAllByPostId(Long postId) {
+    public List<Comment> findAllByPostId(Long postId) {
         logger.info("In CommentServiceImpl getAllByPostId");
         return commentRepository.findAllByPost_Id(postId);
     }
