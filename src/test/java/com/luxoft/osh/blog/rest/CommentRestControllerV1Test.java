@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxoft.osh.blog.entity.Comment;
 import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.service.CommentService;
+import com.luxoft.osh.blog.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -18,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
-import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -37,6 +37,9 @@ class CommentRestControllerV1Test {
 
     @MockBean
     private CommentService commentService;
+
+    @MockBean
+    private PostService postService;
 
     @Test
     void testGetAllComments() throws Exception {
@@ -68,7 +71,7 @@ class CommentRestControllerV1Test {
                 .build();
         comments.add(thirdComment);
 
-        given(commentService.findAllByPostId(1L)).willReturn(comments);
+        when(commentService.findAllByPostId(1L)).thenReturn(comments);
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/{id}/comments", 1L)
                     .accept(MediaType.APPLICATION_JSON))
@@ -80,6 +83,19 @@ class CommentRestControllerV1Test {
                 .andExpect(MockMvcResultMatchers.jsonPath("$[1].text").value("Second comment text"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].text").value("Third comment text"))
                 .andExpect(MockMvcResultMatchers.jsonPath("$[2].name").doesNotExist());
+        verify(commentService, times(1)).findAllByPostId(1L);
+    }
+
+    @Test
+    void testGetAllCommentsIfCommentsIsEmpty() throws Exception {
+        List<Comment> comments = new ArrayList<>();
+
+        when(commentService.findAllByPostId(1L)).thenReturn(comments);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/posts/{id}/comments", 1L)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
         verify(commentService, times(1)).findAllByPostId(1L);
     }
 
@@ -103,6 +119,16 @@ class CommentRestControllerV1Test {
     }
 
     @Test
+    void testSaveCommentIfCommentIsNull() throws Exception {
+        mockMvc.perform( MockMvcRequestBuilders
+                        .post("/api/v1/posts/{id}/comments", 1)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(null)))
+                .andDo(print())
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void testGetCommentByIdByPostId() throws Exception {
         Comment comment = Comment.builder()
                 .id(1L)
@@ -120,6 +146,16 @@ class CommentRestControllerV1Test {
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.text").value("First comment text"));
         verify(commentService, times(1)).getByIdAndPost_Id(1L,1L);
+    }
+
+    @Test
+    void testGetCommentByIdByPostIdIfCommentIsNull() throws Exception {
+        when(commentService.getByIdAndPost_Id(1L, 1L)).thenReturn(null);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .get("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
+                        .accept(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isNotFound());
     }
 
     @Test
