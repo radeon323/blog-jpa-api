@@ -26,21 +26,18 @@ public class CommentServiceImpl implements CommentService{
         this.postRepository = postRepository;
     }
 
-    @Transactional
     @Override
     public List<Comment> findAllByPostId(Long postId) {
         logger.info("In CommentServiceImpl getAllByPostId");
-        return commentRepository.findAllByPost_Id(postId);
+        return commentRepository.findAllByPostId(postId);
     }
 
-    @Transactional
     @Override
-    public Comment getByIdAndPost_Id(Long id, Long postId) {
-        logger.info("In CommentServiceImpl getByIdAndPost_Id");
-        return commentRepository.getByIdAndPost_Id(id, postId);
+    public Comment getByIdAndPostId(Long id, Long postId) {
+        logger.info("In CommentServiceImpl getByIdAndPostId");
+        return commentRepository.findByIdAndPostId(id, postId);
     }
 
-    @Transactional
     @Override
     public void deleteById(Long id) {
         logger.info("In CommentServiceImpl deleteById");

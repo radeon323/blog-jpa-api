@@ -64,7 +64,7 @@ public class CommentRestControllerV1 {
             @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
         logger.info("CommentRestControllerV1 getCommentByIdByPostId");
 
-        Comment comment = commentService.getByIdAndPost_Id(commentId, postId);
+        Comment comment = commentService.getByIdAndPostId(commentId, postId);
 
         if (comment == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

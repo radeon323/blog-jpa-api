@@ -57,7 +57,7 @@ class CommentServiceImplTest {
                 .build();
         comments.add(thirdComment);
 
-        Mockito.when(commentRepository.findAllByPost_Id(1L)).thenReturn(comments);
+        Mockito.when(commentRepository.findAllByPostId(1L)).thenReturn(comments);
 
         List<Comment> actualComments = commentService.findAllByPostId(1L);
         assertNotNull(actualComments);
@@ -77,8 +77,8 @@ class CommentServiceImplTest {
                 .post(new Post(1L,"","",true,null))
                 .build();
 
-        Mockito.when(commentRepository.getByIdAndPost_Id(1L, 1L)).thenReturn(comment);
-        Comment actualComment = commentService.getByIdAndPost_Id(1L, 1L);
+        Mockito.when(commentRepository.findByIdAndPostId(1L, 1L)).thenReturn(comment);
+        Comment actualComment = commentService.getByIdAndPostId(1L, 1L);
 
         assertEquals("First comment text", actualComment.getText());
         assertEquals(1L, actualComment.getPostId());

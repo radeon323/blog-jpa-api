@@ -8,7 +8,7 @@ public interface CommentService {
 
     List<Comment> findAllByPostId(Long postId);
 
-    Comment getByIdAndPost_Id(Long commentId, Long postId);
+    Comment getByIdAndPostId(Long commentId, Long postId);
 
     void deleteById(Long commentId);
 

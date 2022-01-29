@@ -75,7 +75,6 @@ class CommentRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/{id}/comments", 1L)
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
                 .andExpect(MockMvcResultMatchers.jsonPath("$", hasSize(3)))
@@ -94,7 +93,6 @@ class CommentRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/{id}/comments", 1L)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(commentService, times(1)).findAllByPostId(1L);
     }
@@ -112,7 +110,6 @@ class CommentRestControllerV1Test {
                     .post("/api/v1/posts/{id}/comments", 1)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(comment)))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.text").value("First comment text"));
         verify(commentService).save(comment, 1L);
@@ -124,7 +121,6 @@ class CommentRestControllerV1Test {
                         .post("/api/v1/posts/{id}/comments", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -137,24 +133,22 @@ class CommentRestControllerV1Test {
                 .post(new Post(1L,"","",true,null))
                 .build();
 
-        when(commentService.getByIdAndPost_Id(1L, 1L)).thenReturn(comment);
+        when(commentService.getByIdAndPostId(1L, 1L)).thenReturn(comment);
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.text").value("First comment text"));
-        verify(commentService, times(1)).getByIdAndPost_Id(1L,1L);
+        verify(commentService, times(1)).getByIdAndPostId(1L,1L);
     }
 
     @Test
     void testGetCommentByIdByPostIdIfCommentIsNull() throws Exception {
-        when(commentService.getByIdAndPost_Id(1L, 1L)).thenReturn(null);
+        when(commentService.getByIdAndPostId(1L, 1L)).thenReturn(null);
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
     }
 
@@ -171,7 +165,6 @@ class CommentRestControllerV1Test {
                     .delete("/api/v1/posts/{postId}/comment/{commentId}", 1, 1)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(comment)))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andExpect(status().isNoContent());
         verify(commentService, times(1)).deleteById(1L);

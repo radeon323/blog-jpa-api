@@ -72,7 +72,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/")
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(3)))
                 .andExpect(jsonPath("$[0].content").value("Content of the first post"))
@@ -90,7 +89,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).findAll();
     }
@@ -130,7 +128,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/?sort=title")
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("First post"))
                 .andExpect(jsonPath("$[1].title").value("Second post"))
@@ -146,7 +143,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/?sort=title")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).sortByTitle();
     }
@@ -168,7 +164,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/?title={title}", "First post")
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$[0].title").value("First post"));
         verify(postService, times(1)).findByTitle("First post");
@@ -182,7 +177,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/?title={title}", "First post")
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).findByTitle("First post");
     }
@@ -201,7 +195,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/{id}", 1)
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("First post"))
@@ -215,7 +208,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/{id}", 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getById(1L);
     }
@@ -253,7 +245,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/{id}/full", 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1))
                 .andExpect(jsonPath("$.title").value("First post"))
@@ -271,7 +262,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                         .get("/api/v1/posts/{id}/full", 1)
                         .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getById(1L);
     }
@@ -290,7 +280,6 @@ class PostRestControllerV1Test {
                     .post("/api/v1/posts/")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(post)))
-                .andDo(print())
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.title").value("Second post"));
@@ -303,7 +292,6 @@ class PostRestControllerV1Test {
                         .post("/api/v1/posts/")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -321,7 +309,6 @@ class PostRestControllerV1Test {
                     .put("/api/v1/posts/{id}", 2)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(post)))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(2))
                 .andExpect(jsonPath("$.star").value(false))
@@ -335,7 +322,6 @@ class PostRestControllerV1Test {
                         .put("/api/v1/posts/{id}", 2)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -353,7 +339,6 @@ class PostRestControllerV1Test {
                     .delete("/api/v1/posts/{id}", 3)
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(objectMapper.writeValueAsString(post)))
-                .andDo(print())
                 .andExpect(MockMvcResultMatchers.content().string(""))
                 .andExpect(status().isNoContent());
         verify(postService, times(1)).delete(3L);
@@ -385,7 +370,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/star")
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].star").value(true))
@@ -401,7 +385,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .get("/api/v1/posts/star")
                     .accept(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(status().isNotFound());
         verify(postService, times(1)).getPostsWithStar();
     }
@@ -420,7 +403,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .put("/api/v1/posts/{id}/star", 1)
                     .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(jsonPath("$.star").value(true))
                 .andExpect(status().isOk());
         verify(postService, times(1)).getById(1L);
@@ -434,7 +416,6 @@ class PostRestControllerV1Test {
                         .put("/api/v1/posts/{id}/star", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
@@ -452,7 +433,6 @@ class PostRestControllerV1Test {
         mockMvc.perform( MockMvcRequestBuilders
                     .delete("/api/v1/posts/{id}/star", 2)
                     .contentType(MediaType.APPLICATION_JSON))
-                .andDo(print())
                 .andExpect(jsonPath("$.star").value(false))
                 .andExpect(status().isOk());
         verify(postService, times(1)).getById(2L);
@@ -466,7 +446,6 @@ class PostRestControllerV1Test {
                         .delete("/api/v1/posts/{id}/star", 1)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
-                .andDo(print())
                 .andExpect(status().isBadRequest());
     }
 
