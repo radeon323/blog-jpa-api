@@ -59,7 +59,7 @@ public class CommentRestControllerV1 {
     }
 
 
-    @GetMapping(value = "{postId}/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "{postId}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Comment> getCommentByIdByPostId(
             @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
         logger.info("CommentRestControllerV1 getCommentByIdByPostId");
@@ -76,7 +76,7 @@ public class CommentRestControllerV1 {
         return responseEntity;
     }
 
-    @DeleteMapping(value = "{postId}/comment/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @DeleteMapping(value = "{postId}/comments/{commentId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Comment> deleteCommentByIdByPostId(
             @PathVariable("postId") Long postId, @PathVariable("commentId") Long commentId) {
         logger.info("CommentRestControllerV1 deleteCommentByIdByPostId");
