@@ -30,7 +30,7 @@ class CommentServiceImplTest {
         CommentServiceImpl commentService = new CommentServiceImpl(commentRepository, postRepository);
 
         List<Comment> comments = new ArrayList<>();
-        Post post = new Post(1L,"","",true,null);
+        Post post = new Post(1L,"","",true,null, null);
         LocalDateTime now = LocalDateTime.now();
 
         Comment firstComment = Comment.builder()
@@ -74,7 +74,7 @@ class CommentServiceImplTest {
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null))
+                .post(new Post(1L,"","",true,null,null))
                 .build();
 
         Mockito.when(commentRepository.findByIdAndPostId(1L, 1L)).thenReturn(comment);

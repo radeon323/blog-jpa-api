@@ -17,7 +17,9 @@ import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
-
+/**
+ * @author Oleksandr Shevchenko
+ */
 @RestController
 @RequestMapping("/api/v1/posts/")
 @RequiredArgsConstructor
@@ -208,6 +210,7 @@ public class PostRestControllerV1 {
         postShort.setTitle(post.getTitle());
         postShort.setContent(post.getContent());
         postShort.setStar(post.isStar());
+        postShort.setTag(post.getTags());
         return postShort;
     }
 
@@ -217,6 +220,7 @@ public class PostRestControllerV1 {
         postFull.setTitle(post.getTitle());
         postFull.setContent(post.getContent());
         postFull.setStar(post.isStar());
+        postFull.setTag(post.getTags());
         postFull.setComments(post.getComments());
         return postFull;
     }

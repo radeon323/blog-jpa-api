@@ -44,7 +44,7 @@ class CommentRestControllerV1Test {
     @Test
     void testGetAllComments() throws Exception {
         List<Comment> comments = new ArrayList<>();
-        Post post = new Post(1L,"","",true,null);
+        Post post = new Post(1L,"","",true,null,null);
         LocalDateTime now = LocalDateTime.now();
 
         Comment firstComment = Comment.builder()
@@ -103,7 +103,7 @@ class CommentRestControllerV1Test {
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null))
+                .post(new Post(1L,"","",true,null,null))
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
@@ -130,7 +130,7 @@ class CommentRestControllerV1Test {
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null))
+                .post(new Post(1L,"","",true,null,null))
                 .build();
 
         when(commentService.getByIdAndPostId(1L, 1L)).thenReturn(comment);
@@ -158,7 +158,7 @@ class CommentRestControllerV1Test {
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null))
+                .post(new Post(1L,"","",true,null,null))
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
