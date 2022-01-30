@@ -3,7 +3,9 @@ package com.luxoft.osh.blog.rest;
 import com.luxoft.osh.blog.dto.PostFull;
 import com.luxoft.osh.blog.dto.PostShort;
 import com.luxoft.osh.blog.entity.Post;
+import com.luxoft.osh.blog.entity.Tag;
 import com.luxoft.osh.blog.service.PostService;
+import com.luxoft.osh.blog.service.TagService;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,10 +32,13 @@ public class PostRestControllerV1 {
     @Autowired
     private final PostService postService;
 
+    @Autowired
+    private final TagService tagService;
+
     @GetMapping(value = "", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<List<PostShort>> getAllPosts(@RequestParam(value = "title", required = false) String title,
+    public ResponseEntity<List<PostShort>> findAllPosts(@RequestParam(value = "title", required = false) String title,
                                                   @RequestParam(value = "sort", required = false) String sort) {
-        logger.info("PostRestControllerV1 getAllPosts");
+        logger.info("PostRestControllerV1 findAllPosts");
 
         List<Post> posts;
 
@@ -111,6 +116,11 @@ public class PostRestControllerV1 {
 
         if (post == null) {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        List<Tag> tags = post.getTags();
+        for (Tag tag : tags) {
+            tagService.save(tag);
         }
 
         postService.save(post);
@@ -210,7 +220,7 @@ public class PostRestControllerV1 {
         postShort.setTitle(post.getTitle());
         postShort.setContent(post.getContent());
         postShort.setStar(post.isStar());
-        postShort.setTag(post.getTags());
+        postShort.setTags(post.getTags());
         return postShort;
     }
 
@@ -220,7 +230,7 @@ public class PostRestControllerV1 {
         postFull.setTitle(post.getTitle());
         postFull.setContent(post.getContent());
         postFull.setStar(post.isStar());
-        postFull.setTag(post.getTags());
+        postFull.setTags(post.getTags());
         postFull.setComments(post.getComments());
         return postFull;
     }
