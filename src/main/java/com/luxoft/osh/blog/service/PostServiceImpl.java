@@ -22,7 +22,7 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<Post> findAll() {
-        logger.info("In PostServiceImpl getAll");
+        logger.info("In PostServiceImpl findAll");
         return postRepository.findAll();
     }
 
