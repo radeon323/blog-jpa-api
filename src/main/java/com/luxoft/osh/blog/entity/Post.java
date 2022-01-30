@@ -1,5 +1,6 @@
 package com.luxoft.osh.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
@@ -40,11 +41,16 @@ public class Post {
     private List<Comment> comments = new ArrayList<>();
 
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToMany(cascade = CascadeType.ALL)
     @JoinTable(name = "posts_tags",
-            joinColumns = @JoinColumn(name = "post_id"),
-            inverseJoinColumns = @JoinColumn(name = "tag_id"))
+            joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
     private List<Tag> tags = new ArrayList<>();
+
+    @JsonProperty("tags")
+    public List<String> listOfTagsNames() {
+        return getTagsNames();
+    }
 
     @Override
     public String toString() {
@@ -54,8 +60,16 @@ public class Post {
                 ", content='" + content + '\'' +
                 ", star=" + star +
                 ", comments=" + comments +
-                ", tags=" + tags +
+                ", tags=" + getTagsNames() +
                 '}';
+    }
+
+    private List<String> getTagsNames() {
+        List<String> listOfTagsNames = new ArrayList<>();
+        for (Tag tag : tags) {
+            listOfTagsNames.add(tag.getName());
+        }
+        return listOfTagsNames;
     }
 
 

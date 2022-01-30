@@ -1,5 +1,6 @@
 package com.luxoft.osh.blog.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.hibernate.annotations.DynamicUpdate;
 import org.hibernate.annotations.OnDelete;
@@ -34,14 +35,27 @@ public class Tag {
     @ManyToMany(mappedBy = "tags")
     private List<Post> posts = new ArrayList<>();
 
+    @JsonProperty("posts")
+    public List<Long> listOfPostIdS() {
+        return getPostIdS();
+    }
+
     @Override
     public String toString() {
         return "Tag{" +
                 "id=" + id +
                 ", name='" + name + '\'' +
-                ", posts=" + posts +
+                ", posts=" + getPostIdS() +
                 '}';
     }
 
+
+    private List<Long> getPostIdS() {
+        List<Long> listOfPostIdS = new ArrayList<>();
+        for (Post post : posts) {
+            listOfPostIdS.add(post.getId());
+        }
+        return listOfPostIdS;
+    }
 
 }

@@ -1,5 +1,6 @@
 package com.luxoft.osh.blog.dto;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.luxoft.osh.blog.entity.Comment;
 import com.luxoft.osh.blog.entity.Tag;
 import lombok.Data;
@@ -16,6 +17,19 @@ public class PostFull {
     private String title;
     private String content;
     private boolean star;
-    private List<Tag> tag = new ArrayList<>();
+    private List<Tag> tags = new ArrayList<>();
     private List<Comment> comments = new ArrayList<>();
+
+    @JsonProperty("tags")
+    public List<String> listOfTagsNames() {
+        return getTagsNames();
+    }
+
+    private List<String> getTagsNames() {
+        List<String> listOfTagsNames = new ArrayList<>();
+        for (Tag tag : tags) {
+            listOfTagsNames.add(tag.getName());
+        }
+        return listOfTagsNames;
+    }
 }
