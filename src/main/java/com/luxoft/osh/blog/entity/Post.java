@@ -8,7 +8,9 @@ import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oleksandr Shevchenko
@@ -37,18 +39,18 @@ public class Post {
     @Column(name = "star", columnDefinition = "boolean default false")
     private boolean star;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, mappedBy = "post")
+    @OneToMany(cascade = CascadeType.PERSIST, orphanRemoval = true, mappedBy = "post")
     private List<Comment> comments = new ArrayList<>();
 
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.PERSIST)
     @JoinTable(name = "posts_tags",
             joinColumns = @JoinColumn(name = "post_id", referencedColumnName = "id"),
             inverseJoinColumns = @JoinColumn(name = "tag_id", referencedColumnName = "id"))
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
     @JsonProperty("tags")
-    public List<String> listOfTagsNames() {
+    public Set<String> listOfTagsNames() {
         return getTagsNames();
     }
 
@@ -64,8 +66,8 @@ public class Post {
                 '}';
     }
 
-    private List<String> getTagsNames() {
-        List<String> listOfTagsNames = new ArrayList<>();
+    private Set<String> getTagsNames() {
+        Set<String> listOfTagsNames = new HashSet<>();
         for (Tag tag : tags) {
             listOfTagsNames.add(tag.getName());
         }

@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.luxoft.osh.blog.entity.Tag;
 import lombok.Data;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * @author Oleksandr Shevchenko
@@ -16,15 +16,26 @@ public class PostShort {
     private String title;
     private String content;
     private boolean star;
-    private List<Tag> tags = new ArrayList<>();
+    private Set<Tag> tags = new HashSet<>();
 
     @JsonProperty("tags")
-    public List<String> listOfTagsNames() {
+    public Set<String> listOfTagsNames() {
         return getTagsNames();
     }
 
-    private List<String> getTagsNames() {
-        List<String> listOfTagsNames = new ArrayList<>();
+    @Override
+    public String toString() {
+        return "Post{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", star=" + star +
+                ", tags=" + getTagsNames() +
+                '}';
+    }
+
+    private Set<String> getTagsNames() {
+        Set<String> listOfTagsNames = new HashSet<>();
         for (Tag tag : tags) {
             listOfTagsNames.add(tag.getName());
         }
