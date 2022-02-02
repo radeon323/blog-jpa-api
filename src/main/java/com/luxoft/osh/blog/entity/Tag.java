@@ -28,11 +28,11 @@ public class Tag {
     @SequenceGenerator(name = "tag_id_gen", sequenceName = "tag_id_seq", allocationSize = 1)
     private Long id;
 
-    @Column(name = "name")
+    @Column(name = "name", unique = true)
     private String name;
 
     @OnDelete(action = OnDeleteAction.NO_ACTION)
-    @ManyToMany(mappedBy = "tags")
+    @ManyToMany(mappedBy = "tags", cascade = CascadeType.PERSIST)
     private List<Post> posts = new ArrayList<>();
 
     @JsonProperty("posts")
@@ -48,7 +48,6 @@ public class Tag {
                 ", posts=" + getPostIdS() +
                 '}';
     }
-
 
     private List<Long> getPostIdS() {
         List<Long> listOfPostIdS = new ArrayList<>();
