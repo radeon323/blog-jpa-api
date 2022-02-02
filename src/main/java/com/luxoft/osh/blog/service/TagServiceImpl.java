@@ -10,9 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * @author Oleksandr Shevchenko
@@ -34,10 +32,10 @@ public class TagServiceImpl implements TagService{
 
     @Transactional
     @Override
-    public List<Tag> findAllByPostId(Long postId) {
+    public Set<Tag> findAllByPostId(Long postId) {
         logger.info("In TagServiceImpl findAllByPostId");
         List<Tag> tags = tagRepository.findAll();
-        List<Tag> tagsById = new ArrayList<>();
+        Set<Tag> tagsById = new HashSet<>();
         for (Tag tag : tags) {
             List<Post> posts = tag.getPosts();
             for (Post post : posts) {

@@ -3,6 +3,7 @@ package com.luxoft.osh.blog.service;
 import com.luxoft.osh.blog.entity.Tag;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oleksandr Shevchenko
@@ -10,7 +11,7 @@ import java.util.List;
 public interface TagService {
     List<Tag> findAll();
 
-    List<Tag> findAllByPostId(Long postId);
+    Set<Tag> findAllByPostId(Long postId);
 
     void deleteById(Long tagId);
 

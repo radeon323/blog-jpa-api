@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oleksandr Shevchenko
@@ -77,7 +78,7 @@ public class TagRestControllerV1 {
     public ResponseEntity<List<TagShort>> findAllByPostId(@PathVariable("postId") Long postId) {
         logger.info("TagRestControllerV1 getAllComments");
 
-        List<Tag> tags = tagService.findAllByPostId(postId);
+        Set<Tag> tags = tagService.findAllByPostId(postId);
 
         if (tags.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);

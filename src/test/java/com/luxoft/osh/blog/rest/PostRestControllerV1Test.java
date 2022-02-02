@@ -3,7 +3,9 @@ package com.luxoft.osh.blog.rest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxoft.osh.blog.entity.Comment;
 import com.luxoft.osh.blog.entity.Post;
+import com.luxoft.osh.blog.entity.Tag;
 import com.luxoft.osh.blog.service.PostService;
+import com.luxoft.osh.blog.service.TagService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -15,16 +17,19 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
+/**
+ * @author Oleksandr Shevchenko
+ */
 @WebMvcTest(PostRestControllerV1.class)
 class PostRestControllerV1Test {
 
@@ -37,6 +42,9 @@ class PostRestControllerV1Test {
     @MockBean
     private PostService postService;
 
+    @MockBean
+    private TagService tagService;
+
     @Test
     void testGetAllPosts() throws Exception {
         List<Post> posts = new ArrayList<>();
@@ -47,6 +55,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(firstPost);
 
@@ -56,6 +65,7 @@ class PostRestControllerV1Test {
                 .content("Content of the second post")
                 .star(false)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(secondPost);
 
@@ -65,6 +75,7 @@ class PostRestControllerV1Test {
                 .content("Content of the third post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(thirdPost);
 
@@ -103,6 +114,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(firstPost);
 
@@ -112,6 +124,7 @@ class PostRestControllerV1Test {
                 .content("Content of the second post")
                 .star(false)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(secondPost);
 
@@ -121,6 +134,7 @@ class PostRestControllerV1Test {
                 .content("Content of the third post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(thirdPost);
 
@@ -157,6 +171,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(firstPost);
 
@@ -189,6 +204,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         when(postService.getById(1L)).thenReturn(post);
@@ -223,6 +239,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(comments)
+                .tags(new HashSet<>())
                 .build();
 
         Comment firstComment = Comment.builder()
@@ -274,6 +291,7 @@ class PostRestControllerV1Test {
                 .content("Content of the second post")
                 .star(false)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
@@ -303,6 +321,7 @@ class PostRestControllerV1Test {
                 .content("Content of the second post")
                 .star(false)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
@@ -333,6 +352,7 @@ class PostRestControllerV1Test {
                 .content("Content of the third post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
@@ -354,6 +374,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(firstPost);
 
@@ -363,6 +384,7 @@ class PostRestControllerV1Test {
                 .content("Content of the third post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
         posts.add(thirdPost);
 
@@ -397,6 +419,7 @@ class PostRestControllerV1Test {
                 .content("Content of the first post")
                 .star(false)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         when(postService.getById(1L)).thenReturn(post);
@@ -427,6 +450,7 @@ class PostRestControllerV1Test {
                 .content("Content of the second post")
                 .star(true)
                 .comments(new ArrayList<>())
+                .tags(new HashSet<>())
                 .build();
 
         when(postService.getById(2L)).thenReturn(post);
@@ -447,6 +471,49 @@ class PostRestControllerV1Test {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(null)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void testAddTagsToPost() throws Exception {
+
+        Tag tag1 = Tag.builder()
+                .id(1L)
+                .name("Tag1")
+                .posts(List.of(new Post()))
+                .build();
+
+        Tag tag2 = Tag.builder()
+                .id(2L)
+                .name("Tag2")
+                .posts(List.of(new Post()))
+                .build();
+
+        Post post = Post.builder()
+                .id(1L)
+                .title("First post")
+                .content("Content of the first post")
+                .star(true)
+                .comments(new ArrayList<>())
+                .tags(Set.of(tag1, tag2))
+                .build();
+
+        when(postService.getById(1L)).thenReturn(post);
+        when(tagService.existsByName(tag1.getName())).thenReturn(true);
+        when(tagService.findByName(tag1.getName())).thenReturn(tag1);
+        when(tagService.existsByName(tag2.getName())).thenReturn(true);
+        when(tagService.findByName(tag2.getName())).thenReturn(tag2);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .put("/api/v1/posts/{id}/tags?tag=", 1)
+                        .accept(MediaType.APPLICATION_JSON))
+//                        .param("Tag1", "Tag1")
+//                        .param("Tag2", "Tag2"))
+                .andExpect(status().isOk());
+//                .andExpect(jsonPath("$.title").value("First post"))
+//                .andExpect(jsonPath("$.tags").value(Set.of(tag1, tag2)));
+//        verify(postService, times(1)).getById(1L);
+//        verify(postService, times(1)).save(any(Post.class));
+//        verify(postService).save(any(Post.class));
+
     }
 
 }
