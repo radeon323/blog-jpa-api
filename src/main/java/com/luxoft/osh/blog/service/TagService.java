@@ -15,4 +15,11 @@ public interface TagService {
     void deleteById(Long tagId);
 
     void save(Tag tag);
+
+    boolean existsByName(String name);
+
+    Tag findByName(String name);
+
+
+
 }

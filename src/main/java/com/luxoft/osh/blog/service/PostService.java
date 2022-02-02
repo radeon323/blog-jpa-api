@@ -19,4 +19,7 @@ public interface PostService {
 
     List<Post> sortByTitle();
 
+    List<Post> findByTagName(String name);
+
+
 }

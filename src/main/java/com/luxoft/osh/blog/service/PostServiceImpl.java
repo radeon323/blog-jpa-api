@@ -62,5 +62,11 @@ public class PostServiceImpl implements PostService {
         return postRepository.findByOrderByTitleAsc(PageRequest.of(0, 10));
     }
 
+    @Override
+    public List<Post> findByTagName(String name) {
+        logger.info("In PostServiceImpl findByTagName");
+        return postRepository.findByTagName(name);
+    }
+
 
 }

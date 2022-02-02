@@ -55,9 +55,26 @@ public class TagServiceImpl implements TagService{
         tagRepository.deleteById(tagId);
     }
 
+    @Transactional
     @Override
     public void save(Tag tag) {
         logger.info("In TagServiceImpl save {}", tag);
-        tagRepository.save(tag);
+        if (!tagRepository.existsByName(tag.getName())) {
+            tagRepository.save(tag);
+        }
     }
+
+    @Override
+    public boolean existsByName(String name) {
+        logger.info("In TagServiceImpl existsByName {}", name);
+        return tagRepository.existsByName(name);
+    }
+
+    @Override
+    public Tag findByName(String name) {
+        logger.info("In TagServiceImpl findByName {}", name);
+        return tagRepository.findByName(name);
+    }
+
+
 }
