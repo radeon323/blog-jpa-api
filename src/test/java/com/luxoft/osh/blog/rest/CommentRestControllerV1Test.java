@@ -4,7 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.luxoft.osh.blog.entity.Comment;
 import com.luxoft.osh.blog.entity.Post;
 import com.luxoft.osh.blog.service.CommentService;
-import com.luxoft.osh.blog.service.PostService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -16,16 +15,17 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.hamcrest.Matchers.hasSize;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-
-
+/**
+ * @author Oleksandr Shevchenko
+ */
 @WebMvcTest(CommentRestControllerV1.class)
 class CommentRestControllerV1Test {
 
@@ -38,13 +38,19 @@ class CommentRestControllerV1Test {
     @MockBean
     private CommentService commentService;
 
-    @MockBean
-    private PostService postService;
+
+    Post post = Post.builder()
+            .id(1L)
+            .title("First post")
+            .content("Content of the first post")
+            .star(true)
+            .comments(new ArrayList<>())
+            .tags(new HashSet<>())
+            .build();
 
     @Test
-    void testGetAllComments() throws Exception {
+    void testFindAllCommentsByPostId() throws Exception {
         List<Comment> comments = new ArrayList<>();
-        Post post = new Post(1L,"","",true,null,null);
         LocalDateTime now = LocalDateTime.now();
 
         Comment firstComment = Comment.builder()
@@ -73,7 +79,7 @@ class CommentRestControllerV1Test {
 
         when(commentService.findAllByPostId(1L)).thenReturn(comments);
         mockMvc.perform( MockMvcRequestBuilders
-                    .get("/api/v1/posts/{id}/comments", 1L)
+                    .get("/api/v1/posts/{id}/comments", 1)
                     .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(MockMvcResultMatchers.jsonPath("$").isNotEmpty())
@@ -91,7 +97,7 @@ class CommentRestControllerV1Test {
 
         when(commentService.findAllByPostId(1L)).thenReturn(comments);
         mockMvc.perform( MockMvcRequestBuilders
-                        .get("/api/v1/posts/{id}/comments", 1L)
+                        .get("/api/v1/posts/{id}/comments", 1)
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
         verify(commentService, times(1)).findAllByPostId(1L);
@@ -99,11 +105,12 @@ class CommentRestControllerV1Test {
 
     @Test
     void testSaveComment() throws Exception {
+
         Comment comment = Comment.builder()
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null,null))
+                .post(post)
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
@@ -126,11 +133,12 @@ class CommentRestControllerV1Test {
 
     @Test
     void testGetCommentByIdByPostId() throws Exception {
+
         Comment comment = Comment.builder()
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null,null))
+                .post(post)
                 .build();
 
         when(commentService.getByIdAndPostId(1L, 1L)).thenReturn(comment);
@@ -158,7 +166,7 @@ class CommentRestControllerV1Test {
                 .id(1L)
                 .text("First comment text")
                 .creationDate(LocalDateTime.now())
-                .post(new Post(1L,"","",true,null,null))
+                .post(post)
                 .build();
 
         mockMvc.perform( MockMvcRequestBuilders
