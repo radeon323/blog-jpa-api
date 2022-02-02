@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Oleksandr Shevchenko
@@ -118,11 +119,6 @@ public class PostRestControllerV1 {
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
 
-        List<Tag> tags = post.getTags();
-        for (Tag tag : tags) {
-            tagService.save(tag);
-        }
-
         postService.save(post);
 
         ResponseEntity<Post> responseEntity = new ResponseEntity<>(post, HttpStatus.CREATED);
@@ -193,8 +189,96 @@ public class PostRestControllerV1 {
         return putDeleteStar(postId);
     }
 
+    @Transactional
+    @PutMapping(value = "{id}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PostShort> addTagsToPost(@PathVariable("id") Long postId,
+                                                @RequestParam(value = "tag", required = false) List<String> tagz) {
+        logger.info("PostRestControllerV1 addTagsToPost");
+        Post post = postService.getById(postId);
 
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
 
+        Set<Tag> postTags = post.getTags();
+        List<Tag> tagsFromRequest = new ArrayList<>();
+
+        for (String s : tagz) {
+            if (tagService.existsByName(s)) {
+                tagsFromRequest.add(tagService.findByName(s));
+            } else {
+                tagsFromRequest.add(new Tag(null,s, new ArrayList<>()));
+            }
+        }
+
+        postTags.addAll(tagsFromRequest);
+        post.setTags(postTags);
+        postService.save(post);
+
+        PostShort postShort = dtoConvertToShort(post);
+
+        ResponseEntity<PostShort> responseEntity = new ResponseEntity<>(postShort, HttpStatus.OK);
+        logger.info("Status Code {}", responseEntity.getStatusCode());
+        logger.info("Request Body {}", responseEntity.getBody());
+        return responseEntity;
+    }
+
+    @Transactional
+    @DeleteMapping(value = "{id}/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<PostShort> removeTagsFromPost(@PathVariable("id") Long postId,
+                                                   @RequestParam(value = "tag", required = false) List<String> tagz) {
+        logger.info("PostRestControllerV1 removeTagsFromPost");
+        Post post = postService.getById(postId);
+
+        if (post == null) {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        Set<Tag> postTags = post.getTags();
+        List<Tag> tagsFromRequest = new ArrayList<>();
+
+        for (String s : tagz) {
+            tagsFromRequest.add(tagService.findByName(s));
+        }
+
+        tagsFromRequest.forEach(postTags::remove);
+        post.setTags(postTags);
+        postService.save(post);
+
+        PostShort postShort = dtoConvertToShort(post);
+
+        ResponseEntity<PostShort> responseEntity = new ResponseEntity<>(postShort, HttpStatus.OK);
+        logger.info("Status Code {}", responseEntity.getStatusCode());
+        logger.info("Request Body {}", responseEntity.getBody());
+        return responseEntity;
+    }
+
+    @Transactional
+    @GetMapping(value = "tag", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<PostShort>> getPostsWithTags(@RequestParam(value = "tag") List<String> tagz) {
+        logger.info("PostRestControllerV1 getPostsWithTags");
+
+        List<Post> posts = new ArrayList<>();
+
+        for (String s : tagz) {
+            List<Post> postsByTagName = postService.findByTagName(s);
+            posts.addAll(postsByTagName);
+        }
+
+        if (posts.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        List<PostShort> postShortList = new ArrayList<>();
+        for (Post post : posts) {
+            postShortList.add(dtoConvertToShort(post));
+        }
+
+        ResponseEntity<List<PostShort>> responseEntity = new ResponseEntity<>(postShortList, HttpStatus.OK);
+        logger.info("Status Code {}", responseEntity.getStatusCode());
+        logger.info("Request Body {}", responseEntity.getBody());
+        return responseEntity;
+    }
 
     @Transactional
     private ResponseEntity<PostShort> putDeleteStar(Long postId) {
@@ -234,8 +318,6 @@ public class PostRestControllerV1 {
         postFull.setComments(post.getComments());
         return postFull;
     }
-
-
 
 
 }

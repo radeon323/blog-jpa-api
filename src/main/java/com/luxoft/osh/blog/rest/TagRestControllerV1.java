@@ -94,7 +94,6 @@ public class TagRestControllerV1 {
         return responseEntity;
     }
 
-
     private TagShort dtoConvertToShort(Tag tag) {
         TagShort tagShort = new TagShort();
         tagShort.setId(tag.getId());
