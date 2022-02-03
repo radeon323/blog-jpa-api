@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -207,11 +208,14 @@ public class PostRestControllerV1 {
             if (tagService.existsByName(s)) {
                 tagsFromRequest.add(tagService.findByName(s));
             } else {
-                tagsFromRequest.add(new Tag(null,s, new ArrayList<>()));
+                tagsFromRequest.add(new Tag(1L,s, new ArrayList<>()));
             }
         }
 
-        postTags.addAll(tagsFromRequest);
+        for (Tag tag : tagsFromRequest) {
+            postTags.add(tag);
+        }
+
         post.setTags(postTags);
         postService.save(post);
 
