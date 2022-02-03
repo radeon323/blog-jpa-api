@@ -85,13 +85,5 @@ class CommentServiceImplTest {
         assertInstanceOf(Post.class, actualComment.getPost());
     }
 
-    @Test
-    void testDeleteById() {
 
-    }
-
-    @Test
-    void testSave() {
-
-    }
 }
