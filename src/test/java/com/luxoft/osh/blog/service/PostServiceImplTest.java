@@ -79,15 +79,6 @@ class PostServiceImplTest {
         assertTrue(actualPost.isStar());
     }
 
-    @Test
-    void testDelete() {
-
-    }
-
-    @Test
-    void testSave() {
-
-    }
 
     @Test
     void testGetPostsWithStar() {
