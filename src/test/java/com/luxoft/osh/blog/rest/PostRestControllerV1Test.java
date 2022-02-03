@@ -497,6 +497,10 @@ class PostRestControllerV1Test {
                 .tags(Set.of(tag1, tag2))
                 .build();
 
+        List<String> tagNames = new ArrayList<>();
+        tagNames.add(tag1.getName());
+        tagNames.add(tag2.getName());
+
         when(postService.getById(1L)).thenReturn(post);
         when(tagService.existsByName(tag1.getName())).thenReturn(true);
         when(tagService.findByName(tag1.getName())).thenReturn(tag1);
@@ -504,16 +508,57 @@ class PostRestControllerV1Test {
         when(tagService.findByName(tag2.getName())).thenReturn(tag2);
         mockMvc.perform( MockMvcRequestBuilders
                         .put("/api/v1/posts/{id}/tags?tag=", 1)
-                        .accept(MediaType.APPLICATION_JSON))
-//                        .param("Tag1", "Tag1")
-//                        .param("Tag2", "Tag2"))
-                .andExpect(status().isOk());
-//                .andExpect(jsonPath("$.title").value("First post"))
-//                .andExpect(jsonPath("$.tags").value(Set.of(tag1, tag2)));
-//        verify(postService, times(1)).getById(1L);
-//        verify(postService, times(1)).save(any(Post.class));
-//        verify(postService).save(any(Post.class));
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("Tag1", "Tag1")
+                        .param("Tag2", "Tag2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("First post"))
+                .andExpect(jsonPath("$.tags").value(tagNames))
+                .andExpect(jsonPath("$.tags[0]").value("Tag1"))
+                .andExpect(jsonPath("$.tags[1]").value("Tag2"));
+        verify(postService, times(1)).getById(1L);
+        verify(postService, times(1)).save(any(Post.class));
+        verify(postService).save(any(Post.class));
+    }
 
+    @Test
+    void testRemoveTagsFromPost() throws Exception {
+
+        Tag tag1 = Tag.builder()
+                .id(1L)
+                .name("Tag1")
+                .posts(List.of(new Post()))
+                .build();
+
+        Tag tag2 = Tag.builder()
+                .id(2L)
+                .name("Tag2")
+                .posts(List.of(new Post()))
+                .build();
+
+        Post post = Post.builder()
+                .id(1L)
+                .title("First post")
+                .content("Content of the first post")
+                .star(true)
+                .comments(new ArrayList<>())
+                .tags(new HashSet<>())
+                .build();
+
+        when(postService.getById(1L)).thenReturn(post);
+        when(tagService.findByName(tag1.getName())).thenReturn(tag1);
+        when(tagService.findByName(tag2.getName())).thenReturn(tag2);
+        mockMvc.perform( MockMvcRequestBuilders
+                        .delete("/api/v1/posts/{id}/tags?tag=", 1)
+                        .accept(MediaType.APPLICATION_JSON)
+                        .param("Tag1", "Tag1")
+                        .param("Tag2", "Tag2"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.title").value("First post"))
+                .andExpect(jsonPath("$.tags").isEmpty());
+        verify(postService, times(1)).getById(1L);
+        verify(postService, times(1)).save(any(Post.class));
+        verify(postService).save(any(Post.class));
     }
 
 }
